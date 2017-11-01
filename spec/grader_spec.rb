@@ -1,5 +1,4 @@
 require_relative '../lib/grader'
-require 'spec_helper'
 
 RSpec.describe Grader do
   let!(:grader) { Grader.new(answer_key, grades: grades) }

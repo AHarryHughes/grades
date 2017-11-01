@@ -1,6 +1,6 @@
 class Grader
 
-  attr_reader :grades
+  attr_reader :grades, :answer_key
 
   def initialize(answer_key, options = {})
 
@@ -11,13 +11,13 @@ class Grader
 
   def score(answers)
 
-    throw :ArgumentError1 if answers.length > @answer_key.length
+    throw :ArgumentError if answers.length > @answer_key.length
 
     real_grades = 'A'.upto('D').to_a
-    answers.each { |answer| throw :ArgumentError2 if !real_grades.include?(answer) && answer != nil }
+    answers.each { |answer| throw :ArgumentError if !real_grades.include?(answer) && answer != nil }
 
     grade_check = Hash[@answer_key.zip(answers)]
-    da_points = 100.0/@answer_key.length
+    da_points = 100.0 / @answer_key.length
     da_score = 0
     grade_check.map { |k,v| k == v ? da_score += da_points : da_score += 0.0 }
     @grades << da_score
@@ -25,7 +25,7 @@ class Grader
 
   end
 
-  def letter_grade(grade_num)
+  def self.letter_grade(grade_num)
 
     return 'A' if grade_num.between?(90, 100)
     return 'B' if grade_num.between?(80, 89)
@@ -36,33 +36,27 @@ class Grader
   end
 
   def curve_points
-    return 100 - @grades.max
+    100 - @grades.max
   end
 
-   def curve
-     curve = curve_points
-     @grades.map! { |grade| grade + curve }
-   end
+  def curve
+    curve = curve_points
+    @grades.map! { |grade| grade + curve }
+  end
+
+  def average_score
+    return @grades.inject(&:+) / @grades.length
+  end
+
+  def high_score
+    return @grades.max
+  end
+
+  def low_score
+    return @grades.min
+  end
 
 end
-
-
-
-grade1 = Grader.new(["A", "B", "C", "D"])
-
-puts grade1.letter_grade(75.34)
-
-puts grade1.score(["A", "B", "A", "A"])
-puts grade1.score(["A", "B", "C", "A"])
-puts grade1.score([nil, nil, nil, "A"])
-
-puts grade1.grades
-
-puts grade1.curve_points
-
-grade1.curve
-
-puts grade1.grades
 
 
 
